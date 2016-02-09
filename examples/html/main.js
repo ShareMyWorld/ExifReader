@@ -11,7 +11,7 @@
     reader = new FileReader();
     reader.onload = function (event) {
       var exif, tags, tableBody, name, row;
-
+      var startTime = Date.now();
       try {
         exif = new ExifReader();
 
@@ -19,6 +19,8 @@
         exif.load(event.target.result);
         // Or, with jDataView you would use this:
         //exif.loadView(new jDataView(event.target.result));
+        var endTime = Date.now();
+        console.log('ExifReader: ' + (endTime - startTime)  +  'ms');
 
         // The MakerNote tag can be really large. Remove it to lower memory usage.
         exif.deleteTag('MakerNote');

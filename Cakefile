@@ -13,5 +13,5 @@ task 'test', 'Test library', ->
     console.log stdout + stderr
 
 task 'build', 'Test and compile', ->
-  invoke 'test'
+#  invoke 'test'
   invoke 'compile'
