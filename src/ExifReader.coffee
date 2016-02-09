@@ -8,18 +8,18 @@
 
 class (exports ? this).ExifReader
 
-  _MIN_DATA_BUFFER_LENGTH:   2
-  _JPEG_ID_SIZE:             2
-  _JPEG_ID:                  0xffd8
-  _APP_MARKER_SIZE:          2
-  _APP0_MARKER:              0xffe0
-  _APP1_MARKER:              0xffe1
-  _APP15_MARKER:             0xffef
-  _APP_ID_OFFSET:            4
-  _BYTES_Exif:               0x45786966
-  _TIFF_HEADER_OFFSET:       10  # From start of APP1 marker.
-  _BYTE_ORDER_BIG_ENDIAN:    0x4949
-  _BYTE_ORDER_LITTLE_ENDIAN: 0x4d4d
+  _MIN_DATA_BUFFER_LENGTH =   2
+  _JPEG_ID_SIZE =             2
+  _JPEG_ID =                  0xffd8
+  _APP_MARKER_SIZE =          2
+  _APP0_MARKER =              0xffe0
+  _APP1_MARKER =              0xffe1
+  _APP15_MARKER =             0xffef
+  _APP_ID_OFFSET =            4
+  _BYTES_Exif =               0x45786966
+  _TIFF_HEADER_OFFSET =       10  # From start of APP1 marker.
+  _BYTE_ORDER_BIG_ENDIAN =    0x4949
+  _BYTE_ORDER_LITTLE_ENDIAN = 0x4d4d
 
   _getTagValueFunctionName = {
       1: '_getByteAt',
@@ -66,32 +66,32 @@ class (exports ? this).ExifReader
     @_dataView = null
 
   _checkImageHeader: ->
-    if @_dataView.byteLength < @_MIN_DATA_BUFFER_LENGTH or @_dataView.getUint16(0, false) isnt @_JPEG_ID
+    if @_dataView.byteLength < _MIN_DATA_BUFFER_LENGTH or @_dataView.getUint16(0, false) isnt _JPEG_ID
       throw new Error 'Invalid image format'
     @_parseAppMarkers(@_dataView)
     if not @_hasExifData()
       throw new Error 'No Exif data'
 
   _parseAppMarkers: (dataView) ->
-    appMarkerPosition = @_JPEG_ID_SIZE
+    appMarkerPosition = _JPEG_ID_SIZE
     loop
-      if dataView.byteLength < appMarkerPosition + @_APP_ID_OFFSET + 5
+      if dataView.byteLength < appMarkerPosition + _APP_ID_OFFSET + 5
         break
       if @_isApp1ExifMarker(dataView, appMarkerPosition)
-        fieldLength = dataView.getUint16(appMarkerPosition + @_APP_MARKER_SIZE, false)
-        @_tiffHeaderOffset = appMarkerPosition + @_TIFF_HEADER_OFFSET
+        fieldLength = dataView.getUint16(appMarkerPosition + _APP_MARKER_SIZE, false)
+        @_tiffHeaderOffset = appMarkerPosition + _TIFF_HEADER_OFFSET
       else if @_isAppMarker(dataView, appMarkerPosition)
-        fieldLength = dataView.getUint16(appMarkerPosition + @_APP_MARKER_SIZE, false)
+        fieldLength = dataView.getUint16(appMarkerPosition + _APP_MARKER_SIZE, false)
       else
         break
-      appMarkerPosition += @_APP_MARKER_SIZE + fieldLength
+      appMarkerPosition += _APP_MARKER_SIZE + fieldLength
 
   _isApp1ExifMarker: (dataView, appMarkerPosition) ->
-    dataView.getUint16(appMarkerPosition, false) is @_APP1_MARKER and dataView.getUint32(appMarkerPosition + @_APP_ID_OFFSET, false) is @_BYTES_Exif and dataView.getUint8(appMarkerPosition + @_APP_ID_OFFSET + 4, false) is 0x00
+    dataView.getUint16(appMarkerPosition, false) is _APP1_MARKER and dataView.getUint32(appMarkerPosition + _APP_ID_OFFSET, false) is _BYTES_Exif and dataView.getUint8(appMarkerPosition + _APP_ID_OFFSET + 4, false) is 0x00
 
   _isAppMarker: (dataView, appMarkerPosition) ->
     appMarker = dataView.getUint16(appMarkerPosition, false)
-    appMarker >= @_APP0_MARKER and appMarker <= @_APP15_MARKER
+    appMarker >= _APP0_MARKER and appMarker <= _APP15_MARKER
 
   _hasExifData: ->
     @_tiffHeaderOffset isnt 0
@@ -104,9 +104,9 @@ class (exports ? this).ExifReader
 #    @_readInteroperabilityIfd()
 
   _setByteOrder: () ->
-    if @_dataView.getUint16(@_tiffHeaderOffset) == @_BYTE_ORDER_BIG_ENDIAN
+    if @_dataView.getUint16(@_tiffHeaderOffset) == _BYTE_ORDER_BIG_ENDIAN
       @_littleEndian = true
-    else if @_dataView.getUint16(@_tiffHeaderOffset) == @_BYTE_ORDER_LITTLE_ENDIAN
+    else if @_dataView.getUint16(@_tiffHeaderOffset) == _BYTE_ORDER_LITTLE_ENDIAN
       @_littleEndian = false
     else
       throw new Error 'Illegal byte order value. Faulty image.'

@@ -10,31 +10,31 @@
 
 (function() {
   (typeof exports !== "undefined" && exports !== null ? exports : this).ExifReader = (function() {
-    var _getTagValueFunctionName;
+    var _APP0_MARKER, _APP15_MARKER, _APP1_MARKER, _APP_ID_OFFSET, _APP_MARKER_SIZE, _BYTES_Exif, _BYTE_ORDER_BIG_ENDIAN, _BYTE_ORDER_LITTLE_ENDIAN, _JPEG_ID, _JPEG_ID_SIZE, _MIN_DATA_BUFFER_LENGTH, _TIFF_HEADER_OFFSET, _getTagValueFunctionName;
 
-    ExifReader.prototype._MIN_DATA_BUFFER_LENGTH = 2;
+    _MIN_DATA_BUFFER_LENGTH = 2;
 
-    ExifReader.prototype._JPEG_ID_SIZE = 2;
+    _JPEG_ID_SIZE = 2;
 
-    ExifReader.prototype._JPEG_ID = 0xffd8;
+    _JPEG_ID = 0xffd8;
 
-    ExifReader.prototype._APP_MARKER_SIZE = 2;
+    _APP_MARKER_SIZE = 2;
 
-    ExifReader.prototype._APP0_MARKER = 0xffe0;
+    _APP0_MARKER = 0xffe0;
 
-    ExifReader.prototype._APP1_MARKER = 0xffe1;
+    _APP1_MARKER = 0xffe1;
 
-    ExifReader.prototype._APP15_MARKER = 0xffef;
+    _APP15_MARKER = 0xffef;
 
-    ExifReader.prototype._APP_ID_OFFSET = 4;
+    _APP_ID_OFFSET = 4;
 
-    ExifReader.prototype._BYTES_Exif = 0x45786966;
+    _BYTES_Exif = 0x45786966;
 
-    ExifReader.prototype._TIFF_HEADER_OFFSET = 10;
+    _TIFF_HEADER_OFFSET = 10;
 
-    ExifReader.prototype._BYTE_ORDER_BIG_ENDIAN = 0x4949;
+    _BYTE_ORDER_BIG_ENDIAN = 0x4949;
 
-    ExifReader.prototype._BYTE_ORDER_LITTLE_ENDIAN = 0x4d4d;
+    _BYTE_ORDER_LITTLE_ENDIAN = 0x4d4d;
 
     _getTagValueFunctionName = {
       1: '_getByteAt',
@@ -79,7 +79,7 @@
     };
 
     ExifReader.prototype._checkImageHeader = function() {
-      if (this._dataView.byteLength < this._MIN_DATA_BUFFER_LENGTH || this._dataView.getUint16(0, false) !== this._JPEG_ID) {
+      if (this._dataView.byteLength < _MIN_DATA_BUFFER_LENGTH || this._dataView.getUint16(0, false) !== _JPEG_ID) {
         throw new Error('Invalid image format');
       }
       this._parseAppMarkers(this._dataView);
@@ -90,33 +90,33 @@
 
     ExifReader.prototype._parseAppMarkers = function(dataView) {
       var appMarkerPosition, fieldLength, results;
-      appMarkerPosition = this._JPEG_ID_SIZE;
+      appMarkerPosition = _JPEG_ID_SIZE;
       results = [];
       while (true) {
-        if (dataView.byteLength < appMarkerPosition + this._APP_ID_OFFSET + 5) {
+        if (dataView.byteLength < appMarkerPosition + _APP_ID_OFFSET + 5) {
           break;
         }
         if (this._isApp1ExifMarker(dataView, appMarkerPosition)) {
-          fieldLength = dataView.getUint16(appMarkerPosition + this._APP_MARKER_SIZE, false);
-          this._tiffHeaderOffset = appMarkerPosition + this._TIFF_HEADER_OFFSET;
+          fieldLength = dataView.getUint16(appMarkerPosition + _APP_MARKER_SIZE, false);
+          this._tiffHeaderOffset = appMarkerPosition + _TIFF_HEADER_OFFSET;
         } else if (this._isAppMarker(dataView, appMarkerPosition)) {
-          fieldLength = dataView.getUint16(appMarkerPosition + this._APP_MARKER_SIZE, false);
+          fieldLength = dataView.getUint16(appMarkerPosition + _APP_MARKER_SIZE, false);
         } else {
           break;
         }
-        results.push(appMarkerPosition += this._APP_MARKER_SIZE + fieldLength);
+        results.push(appMarkerPosition += _APP_MARKER_SIZE + fieldLength);
       }
       return results;
     };
 
     ExifReader.prototype._isApp1ExifMarker = function(dataView, appMarkerPosition) {
-      return dataView.getUint16(appMarkerPosition, false) === this._APP1_MARKER && dataView.getUint32(appMarkerPosition + this._APP_ID_OFFSET, false) === this._BYTES_Exif && dataView.getUint8(appMarkerPosition + this._APP_ID_OFFSET + 4, false) === 0x00;
+      return dataView.getUint16(appMarkerPosition, false) === _APP1_MARKER && dataView.getUint32(appMarkerPosition + _APP_ID_OFFSET, false) === _BYTES_Exif && dataView.getUint8(appMarkerPosition + _APP_ID_OFFSET + 4, false) === 0x00;
     };
 
     ExifReader.prototype._isAppMarker = function(dataView, appMarkerPosition) {
       var appMarker;
       appMarker = dataView.getUint16(appMarkerPosition, false);
-      return appMarker >= this._APP0_MARKER && appMarker <= this._APP15_MARKER;
+      return appMarker >= _APP0_MARKER && appMarker <= _APP15_MARKER;
     };
 
     ExifReader.prototype._hasExifData = function() {
@@ -131,9 +131,9 @@
     };
 
     ExifReader.prototype._setByteOrder = function() {
-      if (this._dataView.getUint16(this._tiffHeaderOffset) === this._BYTE_ORDER_BIG_ENDIAN) {
+      if (this._dataView.getUint16(this._tiffHeaderOffset) === _BYTE_ORDER_BIG_ENDIAN) {
         return this._littleEndian = true;
-      } else if (this._dataView.getUint16(this._tiffHeaderOffset) === this._BYTE_ORDER_LITTLE_ENDIAN) {
+      } else if (this._dataView.getUint16(this._tiffHeaderOffset) === _BYTE_ORDER_LITTLE_ENDIAN) {
         return this._littleEndian = false;
       } else {
         throw new Error('Illegal byte order value. Faulty image.');
